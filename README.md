@@ -5,6 +5,6 @@ Python
 SciPython
 =========
 
-Some links with documentation
--http://kitchingroup.cheme.cmu.edu/pycse/pycse.html
+Some links with documentation:
+- http://kitchingroup.cheme.cmu.edu/pycse/pycse.html
  
