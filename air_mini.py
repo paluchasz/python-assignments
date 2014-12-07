@@ -7,6 +7,6 @@ def trajectory (launch_speed, launch_angle_deg, num_samples):
   y = numpy.array(num_samples, dtype=float)
   t = numpy.array(num_samples, dtype=float)
 
-x = launch_speed*cos(launch_angle_deg)*t
-y = launch_speed*sin(launch_angle_deg)*t-0.5*9.81*t^2
+  x = launch_speed*cos(launch_angle_deg)*t
+  y = launch_speed*sin(launch_angle_deg)*t-0.5*9.81*t^2
 
