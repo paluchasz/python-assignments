@@ -1,10 +1,13 @@
 Python
 ======
-- How to pass argument from command line - http://www.tutorialspoint.com/python/python_command_line_arguments.htm
+How to use Python tuples - http://www.tutorialspoint.com/python/python_tuples.htm
 
 SciPython
 =========
-
-Some links with documentation:
+Some links with tutorials:
 - http://kitchingroup.cheme.cmu.edu/pycse/pycse.html
- 
+
+
+MatPlotLib
+==========
+See example of plots - http://matplotlib.org/examples/index.html   
