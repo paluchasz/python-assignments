@@ -3,6 +3,7 @@ USER_ID = "ggjv86"
 
 "put doc string here"
 def trajectory (launch_speed, launch_angle_deg, num_samples):
+  """ tutaj napisze documentcje funkcji trajectory, jako zadanie domowe """
   #launch_speed is the initial speed of the air sampling projectile
   #launch_angle_deg is the angle in degrees from the horizontal at which the air sampling projectile is launched
   #num_samples is 
