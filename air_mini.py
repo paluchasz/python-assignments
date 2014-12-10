@@ -13,7 +13,7 @@ def trajectory (launch_speed, launch_angle_deg, num_samples):
   time = numpy.arange(num_samples, dtype=float)
   
   t_earth = 2*launch_speed*numpy.sin(launch_angle_deg)/9.81
-  dt = t_earth/num_samples
+  dt = t_earth/(num_samples-1)
 
   for t in range(0,num_samples):
     time[t] =dt*t
