@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 USER = "Szymon Palucha"
 USER_ID = "ggjv86"
 
@@ -33,8 +32,4 @@ def trajectory_drag(launch_speed,launch_angle_deg, num_samples, m, g, k):
 	y[t]=1/k*(m*g*time[t]+m*(launch_speed*numpy.sin(launch_angle_deg)-m*g/k)*(1-numpy.exp(-k*time[t]/m)))
 	
         	
-=======
-$ git init
-git add air_main.py
-git commit m- 'air_main.py'
->>>>>>> a2dd8fe75415937ccb3c81566843e560e83a8439
+
