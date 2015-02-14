@@ -1,32 +1,33 @@
 USER = "Szymon Palucha"
 USER_ID = "ggjv86"
 
+import numpy
+import math
+
 def trajectory (launch_speed, launch_angle_deg, num_samples):
-  ''' This method creates three arrays for x y and t. It then uses suvat equations to add values to these arrays'''
-  #launch_speed is the initial speed of the air sampling projectile
-  #launch_angle_deg is the angle in degrees from the horizontal at which the air sampling projectile is launched
-  #num_samples is the number of time samples distributed evenly over the time of flight 
+        ''' This method creates three arrays for x y and t. It then uses suvat equations to add values to these arrays'''
+        #launch_speed is the initial speed of the air sampling projectile
+        #launch_angle_deg is the angle in degrees from the horizontal at which the air sampling projectile is launched
+        #num_samples is the number of time samples distributed evenly over the time of flight 
 
-  import numpy
-  import math
 
-  launch_angle_deg = launch_angle_deg*math.pi/180
-  #This is to convert the angle to radians so the sine/cosine functions can be applied
-  x = numpy.arange(num_samples, dtype=float)
-  y = numpy.arange(num_samples, dtype=float)
-  time = numpy.arange(num_samples, dtype=float)
+        launch_angle_deg = launch_angle_deg*math.pi/180
+        #This is to convert the angle to radians so the sine/cosine functions can be applied
+        x = numpy.arange(num_samples, dtype=float)
+        y = numpy.arange(num_samples, dtype=float)
+        time = numpy.arange(num_samples, dtype=float)
 
-  t_earth = 2*launch_speed*numpy.sin(launch_angle_deg)/9.81
-  #This equation gives the total time of flight
-  dt = t_earth/(num_samples-1)
-  #dt is the time interval
+        t_earth = 2*launch_speed*numpy.sin(launch_angle_deg)/9.81
+        #This equation gives the total time of flight
+        dt = t_earth/(num_samples-1)
+        #dt is the time interval
 
-  for t in range(0,num_samples):
-    time[t] =dt*t
-    x[t] = launch_speed*numpy.cos(launch_angle_deg)*time[t]
-    y[t] = launch_speed*numpy.sin(launch_angle_deg)*time[t]-0.5*9.81*time[t]**2
+        for t in range(0,num_samples):
+          time[t] =dt*t
+          x[t] = launch_speed*numpy.cos(launch_angle_deg)*time[t]
+          y[t] = launch_speed*numpy.sin(launch_angle_deg)*time[t]-0.5*9.81*time[t]**2
 
-  return(x,y,time)
+        return(x,y,time)
 
 def trajectory_drag(launch_speed, launch_angle_deg, num_samples, m, g=-9.81, k=0.043):
 	#launch_speed is the initial speed of the air sampling projectile
@@ -35,8 +36,7 @@ def trajectory_drag(launch_speed, launch_angle_deg, num_samples, m, g=-9.81, k=0
 	#m is the projectile mass in kg
 	#g is the acceleration due to gravity
 	
-	import numpy
-	import math
+
 	
 	launch_angle_deg = launch_angle_deg*math.pi/180
 	#This is to convert the angle to radians so the sine/cosine functions can be applied
@@ -76,10 +76,46 @@ def compare_trajectories(launch_speed, launch_angle_deg, num_samples, m, g=-9.81
 	pyplot.title('Vertical distance against horizontal distance for drag and no drag')
 	pyplot.text(7,0,'k_drag='+str(k))
 	pyplot.show()
+
+#Task3
+def impact_drag(launch_speed, launch_angle_deg, m, g=-9.81, k=0.043):
+
+	#Make the initial time equal the launch_speed so that the function converges to the correct time
+	#i.e the time when the projectile touches the Earth for the second time
+        t = launch_speed
+
+	#This function will calculate x-f(x)/f'(x) for the Newton Raphson method
+	launch_angle_deg = launch_angle_deg*math.pi/180
+	initial_vert_speed = launch_speed*numpy.sin(launch_angle_deg)
+	initial_horiz_speed = launch_speed*numpy.cos(launch_angle_deg)
+	# The equation below equals 0 when y is 0 and it gives the solutions 
+	# for the time when it hits the ground
+	y_t = m*g*t+m*(initial_vert_speed-m*g/k)*(1-numpy.exp(-k*t/m))
+ 	y_first_deriv = m*g+(k*initial_vert_speed-m*g)*numpy.exp(-k*t/m)
 	
+	t_new = t - y_t/y_first_deriv
+	
+	#Do the loop 20 times to give the Newton raphson enough steps to converge to a time to 11dp
+	for l in range(0, 20):
+		y_t = m*g*t_new+m*(initial_vert_speed-m*g/k)*(1-numpy.exp(-k*t_new/m))
+ 		y_first_deriv = m*g+(k*initial_vert_speed-m*g)*numpy.exp(-k*t_new/m)
+		t_new = t_new - y_t/y_first_deriv
+	
+	x_new = m*initial_horiz_speed*(1-numpy.exp(-k*t_new/m))/k
+
+	return x_new, t_new
+
 if __name__=='__main__':  
-	# call compare_trajectores function with given parameters
-	compare_trajectories(9.81, 45, 200, 5, -9.81, 0.43)
-
-
-
+	# Task2: call compare_trajectores function with given parameters
+	#compare_trajectories(9.81, 45, 200, 5, -9.81, 0.043)
+	
+	# Task3: call time_y0 function with given parameter
+        launch_speed = 9.81
+        mass = 5
+	print impact_drag(launch_speed, 45, mass) 
+	compare_trajectories(launch_speed, 45, 200, mass)
+        launch_speed = 3*10^3
+        mass = 0.005
+	print impact_drag(launch_speed, 45,mass) 
+	compare_trajectories(launch_speed, 45, 200, mass)
+	
