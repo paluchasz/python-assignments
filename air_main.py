@@ -113,11 +113,18 @@ def plot_impact_drag(launch_speed, launch_angle_deg, m, g=-9.81, k=0.043):
 	b = launch_angle_deg
 
 	fig = plt.figure()
-	plot3D = fig.add_subplot(111, projection = '3d')
+	diag3D = fig.add_subplot(111, projection = '3d')
 		
 	U, B = numpy.meshgrid(u,b)
 	zs = numpy.array([impact_drag(u, b, m, g, k)[0] for u, b in zip(numpy.ravel(U), numpy.ravel(B))])
 	Z = zs.reshape(U.shape)
+	
+	diag3D.plot_surface(U, B, Z)
+	diag3D.set_xlabel('launch_speed(m/s)')
+	diag3D.set_ylabel('launch_angle_deg')
+	diag3D.set_zlabel('x_imp')
+	
+	plt.show()
 
 	#for i in range(0,len(launch_speed)):
 		#x_imp, t_imp = impact_drag(launch_speed[i], launch_angle_deg[i], m, g, k)
@@ -141,10 +148,10 @@ if __name__=='__main__':
         mass = 5
 	print impact_drag(launch_speed, 45, mass) 
 	compare_trajectories(launch_speed, 45, 2000, mass)
-        launch_speed = 3*10^3
-        mass = 0.005
-	print impact_drag(launch_speed, 45,mass) 
-	compare_trajectories(launch_speed, 45, 2000, mass)
+        #launch_speed = 3*10^3
+        #mass = 0.005
+	#print impact_drag(launch_speed, 45,mass) 
+	#compare_trajectories(launch_speed, 45, 2000, mass)
 	
 	speeds = numpy.arange(1, 90, 1)
 	angles = numpy.arange(1, 90, 1)
