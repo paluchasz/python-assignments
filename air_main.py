@@ -93,17 +93,44 @@ def impact_drag(launch_speed, launch_angle_deg, m, g=-9.81, k=0.043):
 	y_t = m*g*t+m*(initial_vert_speed-m*g/k)*(1-numpy.exp(-k*t/m))
  	y_first_deriv = m*g+(k*initial_vert_speed-m*g)*numpy.exp(-k*t/m)
 	
-	t_new = t - y_t/y_first_deriv
+	t_imp = t - y_t/y_first_deriv
 	
 	#Do the loop 20 times to give the Newton raphson enough steps to converge to a time to 11dp
 	for l in range(0, 20):
-		y_t = m*g*t_new+m*(initial_vert_speed-m*g/k)*(1-numpy.exp(-k*t_new/m))
- 		y_first_deriv = m*g+(k*initial_vert_speed-m*g)*numpy.exp(-k*t_new/m)
-		t_new = t_new - y_t/y_first_deriv
+		y_t = m*g*t_imp+m*(initial_vert_speed-m*g/k)*(1-numpy.exp(-k*t_imp/m))
+ 		y_first_deriv = m*g+(k*initial_vert_speed-m*g)*numpy.exp(-k*t_imp/m)
+		t_imp = t_imp - y_t/y_first_deriv
 	
-	x_new = m*initial_horiz_speed*(1-numpy.exp(-k*t_new/m))/k
+	x_imp = m*initial_horiz_speed*(1-numpy.exp(-k*t_imp/m))/k
 
-	return x_new, t_new
+	return x_imp, t_imp
+#Task4
+def plot_impact_drag(launch_speed, launch_angle_deg, m, g=-9.81, k=0.043):
+	import matplotlib.pyplot as plt
+	from mpl_toolkits.mplot3d import Axes3D
+
+	u = launch_speed
+	b = launch_angle_deg
+
+	fig = plt.figure()
+	plot3D = fig.add_subplot(111, projection = '3d')
+		
+	U, B = numpy.meshgrid(u,b)
+	zs = numpy.array([impact_drag(u, b, m, g, k)[0] for u, b in zip(numpy.ravel(U), numpy.ravel(B))])
+	Z = zs.reshape(U.shape)
+
+	#for i in range(0,len(launch_speed)):
+		#x_imp, t_imp = impact_drag(launch_speed[i], launch_angle_deg[i], m, g, k)
+
+
+	#the below doesnt work	
+	#plt.figure()
+	#plt.plot(launch_speed, launch_angle_deg, x_imp)
+	#plt.xlabel('launch_speed(m/s)')
+	#plt.ylabel('launch_angle_deg')
+	#plt.zlabel('x_imp')
+	#plt.title('3D graph')
+	#plt.show()
 
 if __name__=='__main__':  
 	# Task2: call compare_trajectores function with given parameters
@@ -113,9 +140,12 @@ if __name__=='__main__':
         launch_speed = 9.81
         mass = 5
 	print impact_drag(launch_speed, 45, mass) 
-	compare_trajectories(launch_speed, 45, 200, mass)
+	compare_trajectories(launch_speed, 45, 2000, mass)
         launch_speed = 3*10^3
         mass = 0.005
 	print impact_drag(launch_speed, 45,mass) 
-	compare_trajectories(launch_speed, 45, 200, mass)
+	compare_trajectories(launch_speed, 45, 2000, mass)
 	
+	speeds = numpy.arange(1, 90, 1)
+	angles = numpy.arange(1, 90, 1)
+	plot_impact_drag(speeds, angles,50)
