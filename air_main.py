@@ -1,11 +1,15 @@
+'''The module in task 1 creates three arrays for x y and t for motion with drag and without drag and it adds values to the arrays.'''
+'''The module in task 2 draws two graphs (one with drag and one without drag) for the vertical distance against horizontal difference.'''
+'''The module in task 3 uses the Newton Raphson method to calculate the time for when the projectle hits the ground, then the horizontal distance is calculated'''
+'''The module in task 4 draws a 3D graph of the horizontal impact distance travelled against the launch speed and launch angle'''
 USER = "Szymon Palucha"
 USER_ID = "ggjv86"
 
 import numpy
 import math
 
+#Task 1
 def trajectory (launch_speed, launch_angle_deg, num_samples):
-        ''' This method creates three arrays for x y and t. It then uses suvat equations to add values to these arrays'''
         #launch_speed is the initial speed of the air sampling projectile
         #launch_angle_deg is the angle in degrees from the horizontal at which the air sampling projectile is launched
         #num_samples is the number of time samples distributed evenly over the time of flight 
@@ -66,36 +70,36 @@ def compare_trajectories(launch_speed, launch_angle_deg, num_samples, m, g=-9.81
 	import matplotlib.pyplot as pyplot
 	(x,y,time) = trajectory(launch_speed, launch_angle_deg, num_samples)
 	(x_drag,y_drag,time) = trajectory_drag(launch_speed, launch_angle_deg, num_samples, m, g, k)
-	#print x,y
-	#print x_drag,y_drag
+	
+	#The below plots the graphs of vertical distance against horizontal distance
 	pyplot.figure()
 	pyplot.plot(x,y)
 	pyplot.plot(x_drag,y_drag)
 	pyplot.xlabel('x(m)')
 	pyplot.ylabel('y(m)')
-	pyplot.title('Vertical distance against horizontal distance for drag and no drag')
-	pyplot.text(7,0,'k_drag='+str(k))
+	pyplot.title('Vertical distance against horizontal distance for drag (green line) and no drag (blue line)')
 	pyplot.show()
 
 #Task3
 def impact_drag(launch_speed, launch_angle_deg, m, g=-9.81, k=0.043):
 
 	#Make the initial time equal the launch_speed so that the function converges to the correct time
-	#i.e the time when the projectile touches the Earth for the second time
+	#i.e the time when the projectile touches the Earth for the second time instead of t=0
         t = launch_speed
 
 	#This function will calculate x-f(x)/f'(x) for the Newton Raphson method
 	launch_angle_deg = launch_angle_deg*math.pi/180
 	initial_vert_speed = launch_speed*numpy.sin(launch_angle_deg)
 	initial_horiz_speed = launch_speed*numpy.cos(launch_angle_deg)
-	# The equation below equals 0 when y is 0 and it gives the solutions 
-	# for the time when it hits the ground
+	#The equation below equals 0 when y is 0 and it gives the solutions 
+	#for the time when it hits the ground
 	y_t = m*g*t+m*(initial_vert_speed-m*g/k)*(1-numpy.exp(-k*t/m))
  	y_first_deriv = m*g+(k*initial_vert_speed-m*g)*numpy.exp(-k*t/m)
 	
+	#This is the Newton Raphson method:
 	t_imp = t - y_t/y_first_deriv
 	
-	#Do the loop 20 times to give the Newton raphson enough steps to converge to a time to 11dp
+	#Do the for loop 20 times to give the Newton raphson enough steps to converge to a time to 11dp
 	for l in range(0, 20):
 		y_t = m*g*t_imp+m*(initial_vert_speed-m*g/k)*(1-numpy.exp(-k*t_imp/m))
  		y_first_deriv = m*g+(k*initial_vert_speed-m*g)*numpy.exp(-k*t_imp/m)
@@ -106,6 +110,8 @@ def impact_drag(launch_speed, launch_angle_deg, m, g=-9.81, k=0.043):
 	return x_imp, t_imp
 #Task4
 def plot_impact_drag(launch_speed, launch_angle_deg, m, g=-9.81, k=0.043):
+	#This function will plot the horizontal impact distance against launch speed and launch angle
+	#The below is taken from http://matplotlib.org/mpl_toolkits/mplot3d/tutorial.html and it allows a 3D graph to be drawn
 	import matplotlib.pyplot as plt
 	from mpl_toolkits.mplot3d import Axes3D
 
@@ -115,29 +121,16 @@ def plot_impact_drag(launch_speed, launch_angle_deg, m, g=-9.81, k=0.043):
 	fig = plt.figure()
 	diag3D = fig.add_subplot(111, projection = '3d')
 		
-	U, B = numpy.meshgrid(u,b)
-	zs = numpy.array([impact_drag(u, b, m, g, k)[0] for u, b in zip(numpy.ravel(U), numpy.ravel(B))])
-	Z = zs.reshape(U.shape)
+	U, B = numpy.meshgrid(u,b) #Creates two 2-d arrays of launch speed and launch angle
+	zs = numpy.array([impact_drag(v, d, m, g, k)[0] for v, d in zip(numpy.ravel(U), numpy.ravel(B))]) #Creates an array of impact posotion for every combination of launch speed and launch angle
+	Z = zs.reshape(U.shape) #Reshapes the array of impact position t the same 2D shape as U and B.
 	
 	diag3D.plot_surface(U, B, Z)
 	diag3D.set_xlabel('launch_speed(m/s)')
 	diag3D.set_ylabel('launch_angle_deg')
 	diag3D.set_zlabel('x_imp')
-	
+	diag3D.set_title('Horiztontal impact distance against launch speed and launch angle')
 	plt.show()
-
-	#for i in range(0,len(launch_speed)):
-		#x_imp, t_imp = impact_drag(launch_speed[i], launch_angle_deg[i], m, g, k)
-
-
-	#the below doesnt work	
-	#plt.figure()
-	#plt.plot(launch_speed, launch_angle_deg, x_imp)
-	#plt.xlabel('launch_speed(m/s)')
-	#plt.ylabel('launch_angle_deg')
-	#plt.zlabel('x_imp')
-	#plt.title('3D graph')
-	#plt.show()
 
 if __name__=='__main__':  
 	# Task2: call compare_trajectores function with given parameters
@@ -145,7 +138,7 @@ if __name__=='__main__':
 	
 	# Task3: call time_y0 function with given parameter
         launch_speed = 9.81
-        mass = 5
+        mass = 1
 	print impact_drag(launch_speed, 45, mass) 
 	compare_trajectories(launch_speed, 45, 2000, mass)
         #launch_speed = 3*10^3
